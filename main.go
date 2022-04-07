@@ -5,6 +5,7 @@ import (
 	"box/controller/ofy/account"
 	"box/controller/ofy/medical"
 	"box/controller/ofy/schedule"
+	"box/middleware"
 	"box/preload"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,6 @@ func main() {
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
-	r.Use(gin.Logger())
 
 	ofy := r.Group("/ofy")
 	accountGroup := ofy.Group("/account")
@@ -25,7 +25,7 @@ func main() {
 		accountGroup.POST("/register", account.Register)
 		accountGroup.POST("/login", account.Login)
 	}
-	//ofy.Use(middleware.JWT())
+	ofy.Use(middleware.JWT())
 	scheduleGroup := ofy.Group("/schedule")
 	{
 		scheduleGroup.POST("/create", schedule.Create)
@@ -33,19 +33,19 @@ func main() {
 		scheduleGroup.POST("/update", account.Login)
 		scheduleGroup.POST("/delete", account.Login)
 	}
-	medicalGroup := ofy.Group("/medicals")
+	medicalGroup := ofy.Group("/medical")
 	{
 		//创建成长记录
-		medicalGroup.POST("/", medical.AddRecord)
+		medicalGroup.POST("/addMedical", medical.AddRecord)
 		//获取成长记录
-		medicalGroup.GET("/", medical.GetRecords)
+		medicalGroup.GET("/getMedicals", medical.GetRecords)
 		//growthGroup.POST("/records", account.Login)
 		//growthGroup.POST("/records", account.Login)
 	}
 
 	calculator := r.Group("/calculator")
 	{
-		calculator.GET("/cost", cost.GetCost)
+		calculator.GET("/getSubwayCost", cost.SubwayCost)
 	}
 
 	err := r.Run()

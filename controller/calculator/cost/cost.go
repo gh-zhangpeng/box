@@ -3,25 +3,23 @@ package cost
 import (
 	"box/base"
 	"box/base/output"
+	"box/service/calculator/cost"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
-func GetCost(ctx *gin.Context) {
-	var input struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+func SubwayCost(ctx *gin.Context) {
+	var input cost.SubwayCostInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		log.WithField("input", input).Errorf("account register fail, err: %s", err.Error())
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, errors.WithStack(base.ErrorInvalidParam))
 		return
 	}
-	//err := account.Register(ctx, input.Email, input.Password)
-	//if err != nil {
-	//	log.WithField("input", input).Errorf("account register fail, err: %s", err.Error())
-	//	output.Failure(ctx, err)
-	//	return
-	//}
-	output.Success(ctx, map[string]interface{}{})
+	subwayCost, err := cost.GetSubwayCost(ctx, input)
+	if err != nil {
+		output.Failure(ctx, err)
+		return
+	}
+	output.Success(ctx, map[string]interface{}{
+		"cost": subwayCost,
+	})
 }

@@ -5,18 +5,14 @@ import (
 )
 
 type SubwayCostInput struct {
-	Times     int
-	UnitPrice int
+	Times     int `form:"times"`
+	UnitPrice int `form:"unitPrice" binding:"required"`
 }
 
-type SubwayCostOutput struct {
-	Cost float32 `json:"cost"`
-}
-
-func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (SubwayCostOutput, error) {
+func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (float32, error) {
 	total := float32(param.Times * param.UnitPrice)
 	if total <= 100 {
-		return SubwayCostOutput{Cost: total}, nil
+		return total, nil
 	}
 	const (
 		discountLadderFirst  = 100
@@ -51,5 +47,5 @@ func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (SubwayCostOutput, e
 		}
 	}
 	total = total + float32(remainTimes*param.UnitPrice*discountRateDefault)
-	return SubwayCostOutput{Cost: total}, nil
+	return total, nil
 }
