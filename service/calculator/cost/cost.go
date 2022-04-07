@@ -36,7 +36,6 @@ func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (SubwayCostOutput, e
 			break
 		}
 	}
-
 	for i := 0; i < remainTimes; i++ {
 		total += float32(param.UnitPrice) * discountRateFirst
 		if total > discountLadderSecond {
@@ -44,7 +43,6 @@ func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (SubwayCostOutput, e
 			break
 		}
 	}
-
 	for i := 0; i < remainTimes; i++ {
 		total += float32(param.UnitPrice) * discountRateSecond
 		if total > discountLadderThird {
@@ -52,7 +50,6 @@ func GetSubwayCost(ctx *gin.Context, param SubwayCostInput) (SubwayCostOutput, e
 			break
 		}
 	}
-
 	total = total + float32(remainTimes*param.UnitPrice*discountRateDefault)
 	return SubwayCostOutput{Cost: total}, nil
 }
