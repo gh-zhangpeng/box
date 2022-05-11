@@ -39,13 +39,13 @@ func ParseToken(token string) (*boxClaims, error) {
 	}
 }
 
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(userID uint, expiresAt int64) (string, error) {
 	claims := boxClaims{
 		UserID: userID,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 12).Unix(),
+			ExpiresAt: expiresAt,
 			IssuedAt:  time.Now().Unix(),
-			Issuer:    "box",
+			//Issuer:    strconv.f,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

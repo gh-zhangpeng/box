@@ -51,15 +51,6 @@ func (d userDao) GetRecord(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.
 	return record, nil
 }
 
-//func (d userDao) RetrieveUserByEmail(ctx *gin.Context, email string) (*User, error) {
-//	var user User
-//	result := preload.DB.WithContext(ctx).Where(User{Email: email}).Find(&user).Limit(1)
-//	if result.Error != nil {
-//		return nil, errors.Wrapf(result.Error, "")
-//	}
-//	return &user, nil
-//}
-
 func (d userDao) AddRecord(ctx *gin.Context, email string, password string) (User, error) {
 	user := User{
 		Email:    email,

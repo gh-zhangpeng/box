@@ -33,10 +33,10 @@ func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int32, beginTime
 	var schedules []Schedule
 	query := preload.DB.WithContext(ctx).Where(Schedule{UserID: userID})
 	if beginTime > 0 {
-		query = query.Where("begin_time >= ?", time.Unix(beginTime, 0))
+		query = query.Where("begin_time >= ?", time.UnixMilli(beginTime))
 	}
 	if endTime > 0 {
-		query = query.Where("end_time <= ?", time.Unix(endTime, 0))
+		query = query.Where("end_time <= ?", time.UnixMilli(endTime))
 	}
 	result := query.Find(&schedules)
 	if result.Error != nil {

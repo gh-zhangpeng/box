@@ -7,6 +7,7 @@ import (
 	box_lib "github.com/gh-zhangpeng/box-lib"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"time"
 )
 
 func Login(ctx *gin.Context, email, password string) (map[string]interface{}, error) {
@@ -20,12 +21,13 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 	} else if password != user.Password {
 		return output, errors.WithStack(base.GetErrorWithMsg("登陆失败，密码错误"))
 	}
-	token, err := jwt.GenerateToken(user.ID)
+	expiresAt := time.Now().Add(time.Hour * 12).UnixMilli()
+	token, err := jwt.GenerateToken(user.ID, expiresAt)
 	if err != nil {
 		return output, errors.Wrapf(base.ErrorGenerateToken, "generate token fail, userID: %d", user.ID)
 	}
 	output["token"] = token
-
+	output["expiresAt"] = expiresAt
 	return output, nil
 }
 

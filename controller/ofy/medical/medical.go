@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddRecord(ctx *gin.Context) {
+func Create(ctx *gin.Context) {
 	var input medical.AddRecordInput
 	if err := ctx.ShouldBind(&input); err != nil {
 		output.Failure(ctx, base.ErrorInvalidParam)
@@ -21,7 +21,7 @@ func AddRecord(ctx *gin.Context) {
 	output.Success(ctx, map[string]interface{}{})
 }
 
-func GetRecords(ctx *gin.Context) {
+func Retrieve(ctx *gin.Context) {
 	var input medical.GetRecordsInput
 	if err := ctx.ShouldBind(&input); err != nil {
 		output.Failure(ctx, base.ErrorInvalidParam)
