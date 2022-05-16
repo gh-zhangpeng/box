@@ -1,9 +1,10 @@
 package model
 
 import (
+	"box/base"
 	"box/preload"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -26,34 +27,29 @@ var MedicalDao medicalDao
 
 type medicalDao struct{}
 
-//func (d medicalDao) GetRecord(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (*model.Project, error) {
-//	var data model.Project
-//	db := helpers.MISClient.WithContext(ctx).Scopes(options...)
-//	result := db.Limit(1).Find(&data)
-//	if result.Error != nil {
-//		zlog.Errorf(ctx, "GetRecord fail, err: %s", result.Error.Error())
-//		return nil, result.Error
-//	}
-//	return &data, nil
-//}
-
 func (d medicalDao) GetRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (int64, []Medical, error) {
 	var data []Medical
 	db := preload.DB.WithContext(ctx).Scopes(options...)
 	var totalCount int64
 	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
 	if result.Error != nil {
-		log.Errorf("medical get records fail, err: %s", result.Error.Error())
-		return 0, nil, result.Error
+		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "get records fail, err: %s", result.Error.Error())
 	}
 	return totalCount, data, nil
 }
 
-func (d medicalDao) AddRecord(ctx *gin.Context, newValue Medical) error {
-	result := preload.DB.WithContext(ctx).Create(&newValue)
+func (d medicalDao) AddRecord(ctx *gin.Context, value Medical) error {
+	result := preload.DB.WithContext(ctx).Create(&value)
 	if result.Error != nil {
-		log.WithField("newValue", newValue).Errorf("medical add record fail, err: %s", result.Error.Error())
-		return result.Error
+		return errors.Wrapf(base.ErrorDBInsert, "add record fail, err: %s", result.Error.Error())
+	}
+	return nil
+}
+
+func (d medicalDao) UpdateRecord(ctx *gin.Context, condition Medical, newValue Medical) error {
+	result := preload.DB.WithContext(ctx).Where(condition).Updates(&newValue)
+	if result.Error != nil {
+		return errors.Wrapf(base.ErrorDBUpdate, "update record fail, err: %s", result.Error.Error())
 	}
 	return nil
 }

@@ -27,7 +27,7 @@ func main() {
 	ofy.Use(middleware.JWT())
 	//scheduleGroup := ofy.Group("/schedule")
 	//{
-	//	scheduleGroup.POST("/create", schedule.Create)
+	//	scheduleGroup.POST("/create", schedule.Add)
 	//	scheduleGroup.GET("/retrieve", schedule.Retrieve)
 	//	scheduleGroup.POST("/update", account.Login)
 	//	scheduleGroup.POST("/delete", account.Login)
@@ -35,7 +35,7 @@ func main() {
 	medicalGroup := ofy.Group("/medical")
 	{
 		//添加成长记录
-		medicalGroup.POST("/create", medical.Create)
+		medicalGroup.POST("/add", medical.Add)
 		//获取成长记录
 		medicalGroup.GET("/retrieve", medical.Retrieve)
 	}
