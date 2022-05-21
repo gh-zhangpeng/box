@@ -10,7 +10,7 @@ import (
 var key = []byte("box-key")
 
 type boxClaims struct {
-	UserID uint `json:"userID"`
+	UserID int64 `json:"userID"`
 	jwt.StandardClaims
 }
 
@@ -39,7 +39,7 @@ func ParseToken(token string) (*boxClaims, error) {
 	}
 }
 
-func GenerateToken(userID uint, expiresAt int64) (string, error) {
+func GenerateToken(userID int64, expiresAt int64) (string, error) {
 	claims := boxClaims{
 		UserID: userID,
 		StandardClaims: jwt.StandardClaims{

@@ -5,7 +5,7 @@ go 1.17
 //replace github.com/gh-zhangpeng/box-lib => ../box-lib
 
 require (
-	github.com/gh-zhangpeng/box-lib v1.0.2
+	github.com/gh-zhangpeng/box-lib v1.0.4
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/pkg/errors v0.8.1

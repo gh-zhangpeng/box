@@ -12,10 +12,14 @@ const tableNameMedical = "tblMedical"
 
 // Medical mapped from table <tblMedical>
 type Medical struct {
-	Height            float32 `gorm:"column:height;type:float unsigned;default:0" json:"height"`                         // 身高，单位：厘米
-	Weight            float32 `gorm:"column:weight;type:float unsigned;default:0" json:"weight"`                         // 体重，单位：公斤
-	HeadCircumference float32 `gorm:"column:head_circumference;type:float unsigned;default:0" json:"head_circumference"` // 头围
-	gorm.Model
+	ID                int64   `gorm:"column:id;type:int unsigned;primaryKey;autoIncrement:true" json:"id"`                        // 自增主键
+	Height            float32 `gorm:"column:height;type:float unsigned;not null;default:0" json:"height"`                         // 身高，单位：厘米
+	Weight            float32 `gorm:"column:weight;type:float unsigned;not null;default:0" json:"weight"`                         // 体重，单位：公斤
+	HeadCircumference float32 `gorm:"column:head_circumference;type:float unsigned;not null;default:0" json:"head_circumference"` // 头围
+	OperatorID        int64   `gorm:"column:operator_id;type:int;not null;default:0" json:"operator_id"`                          // 操作人id
+	CreatedAt         int64   `gorm:"column:created_at;type:int;not null" json:"created_at"`                                      // 创建时间
+	UpdatedAt         int64   `gorm:"column:updated_at;type:int;not null" json:"updated_at"`                                      // 更新时间
+	DeletedAt         int64   `gorm:"column:deleted_at;type:int;not null;default:0" json:"deleted_at"`                            // 删除时间
 }
 
 // TableName Medical's table name

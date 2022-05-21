@@ -16,10 +16,10 @@ func InitLog() {
 		TimestampFormat: "2006-01-02 15:04:05.000",
 	})
 	// You could set this to any `io.Writer` such as a file
-	//logFile, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//log.SetOutput(io.MultiWriter(os.Stdout, logFile))
-	log.SetOutput(io.MultiWriter(os.Stdout))
+	logFile, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	log.SetOutput(io.MultiWriter(os.Stdout, logFile))
+	//log.SetOutput(io.MultiWriter(os.Stdout))
 }

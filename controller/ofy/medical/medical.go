@@ -13,7 +13,7 @@ func Add(ctx *gin.Context) {
 		output.Failure(ctx, base.ErrorInvalidParam)
 		return
 	}
-	err := medical.AddRecord(ctx, input)
+	err := medical.Add(ctx, input)
 	if err != nil {
 		output.Failure(ctx, err)
 		return
@@ -36,12 +36,12 @@ func Update(ctx *gin.Context) {
 }
 
 func Retrieve(ctx *gin.Context) {
-	var input medical.GetRecordsInput
+	var input medical.RetrieveInput
 	if err := ctx.ShouldBind(&input); err != nil {
 		output.Failure(ctx, base.ErrorInvalidParam)
 		return
 	}
-	data, err := medical.GetRecords(ctx, input)
+	data, err := medical.Retrieve(ctx, input)
 	if err != nil {
 		output.Failure(ctx, err)
 		return

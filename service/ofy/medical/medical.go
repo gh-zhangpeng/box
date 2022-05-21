@@ -3,14 +3,14 @@ package medical
 import (
 	"box/base"
 	"box/model"
+	box_lib "github.com/gh-zhangpeng/box-lib"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"time"
 )
 
 type UpdateInput struct {
-	ID                uint    `json:"ID" binding:"required"`
+	ID                int64   `json:"ID" binding:"required"`
 	Height            float32 `json:"height"`
 	Weight            float32 `json:"weight"`
 	HeadCircumference float32 `json:"headCircumference"`
@@ -21,15 +21,17 @@ func UpdateRecord(ctx *gin.Context, input UpdateInput) error {
 		return base.ErrorInvalidParam
 	}
 	condition := model.Medical{
-		Model: gorm.Model{ID: input.ID},
+		ID: input.ID,
+		//Model: gorm.Model{ID: input.ID},
 	}
 	newValue := model.Medical{
 		Height:            input.Height,
 		Weight:            input.Weight,
 		HeadCircumference: input.HeadCircumference,
-		Model: gorm.Model{
-			UpdatedAt: time.Now(),
-		},
+		UpdatedAt:         time.Now().Unix(),
+		//Model: gorm.Model{
+		//	UpdatedAt: time.Now(),
+		//},
 	}
 	err := model.MedicalDao.UpdateRecord(ctx, condition, newValue)
 	if err != nil {
@@ -45,7 +47,7 @@ type AddInput struct {
 	HeadCircumference float32 `json:"headCircumference"`
 }
 
-func AddRecord(ctx *gin.Context, input AddInput) error {
+func Add(ctx *gin.Context, input AddInput) error {
 	if input.Height <= 0 && input.Weight <= 0 && input.HeadCircumference <= 0 {
 		return base.ErrorInvalidParam
 	}
@@ -53,6 +55,7 @@ func AddRecord(ctx *gin.Context, input AddInput) error {
 		Height:            input.Height,
 		Weight:            input.Weight,
 		HeadCircumference: input.HeadCircumference,
+		OperatorID:        ctx.GetInt64("_userID"),
 	}
 	err := model.MedicalDao.AddRecord(ctx, medical)
 	if err != nil {
@@ -62,33 +65,53 @@ func AddRecord(ctx *gin.Context, input AddInput) error {
 	return nil
 }
 
-type GetRecordsInput struct {
+type RetrieveInput struct {
 	PageNo   int `form:"pageNo" binding:"required"`
 	PageSize int `form:"pageSize" binding:"required"`
 }
 
-func GetRecords(ctx *gin.Context, input GetRecordsInput) (map[string]interface{}, error) {
-	totalCount, data, err := model.MedicalDao.GetRecords(ctx, model.Paginate(input.PageNo, input.PageSize))
+func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, error) {
+	totalCount, records, err := model.MedicalDao.GetRecords(ctx, model.Paginate(input.PageNo, input.PageSize), model.OrderBy("updated_at desc"))
 	if err != nil {
 		log.Errorf("medical get records fail, err: %s", err.Error())
 		return nil, err
 	}
 	type medical struct {
-		ID                uint    `json:"ID"`
+		ID                int64   `json:"ID"`
 		Height            float32 `json:"height"`
 		Weight            float32 `json:"weight"`
 		HeadCircumference float32 `json:"headCircumference"`
 		UpdatedAt         string  `json:"updatedAt"`
+		operatorID        int64
+		Operator          string `json:"operator"`
 	}
-	medicals := make([]medical, 0, len(data))
-	for _, v := range data {
+	medicals := make([]medical, 0, len(records))
+	operatorIDs := make([]uint, 0, len(records))
+	for _, record := range records {
 		medicals = append(medicals, medical{
-			ID:                v.ID,
-			Height:            v.Height,
-			Weight:            v.Weight,
-			HeadCircumference: v.HeadCircumference,
-			UpdatedAt:         v.UpdatedAt.Format("2006-01-02 15:04:05"),
+			ID:                record.ID,
+			Height:            record.Height,
+			Weight:            record.Weight,
+			HeadCircumference: record.HeadCircumference,
+			UpdatedAt:         time.Unix(record.UpdatedAt, 0).Format("2006-01-02 15:04:05"),
+			operatorID:        record.OperatorID,
+			Operator:          "未知操作人",
 		})
+		operatorIDs = append(operatorIDs, uint(record.OperatorID))
+	}
+
+	users, err := model.UserDao.GetRecords(ctx, model.IDIn(box_lib.UniqueUIntSlice(operatorIDs)))
+	if err != nil {
+		return nil, err
+	}
+	userID2Email := make(map[int64]string)
+	for _, user := range users {
+		userID2Email[user.ID] = user.Email
+	}
+	for i, v := range medicals {
+		if email, ok := userID2Email[v.operatorID]; ok {
+			medicals[i].Operator = email
+		}
 	}
 	return map[string]interface{}{
 		"totalCount": totalCount,

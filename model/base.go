@@ -18,3 +18,15 @@ func Paginate(pageNo, pageSize int) func(db *gorm.DB) *gorm.DB {
 		return db.Offset(offset).Limit(pageSize)
 	}
 }
+
+func OrderBy(orderBy string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Order(orderBy)
+	}
+}
+
+func IDIn(IDs []uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where(IDs)
+	}
+}

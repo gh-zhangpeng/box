@@ -15,16 +15,29 @@ func main() {
 	preload.InitMySQL()
 	//preload.GenerateModel(preload.DB)
 
-	r := gin.Default()
-	r.Use(gin.Recovery())
+	engine := gin.Default()
+	r := engine.Group("/api", gin.Recovery())
 
-	ofy := r.Group("/ofy")
-	accountGroup := ofy.Group("/account")
+	accountGroup := r.Group("/account")
 	{
 		accountGroup.POST("/register", account.Register)
 		accountGroup.POST("/login", account.Login)
 	}
-	ofy.Use(middleware.JWT())
+
+	calculator := r.Group("/calculator")
+	{
+		calculator.GET("/subwayCost", cost.SubwayCost)
+	}
+
+	//ofy := r.Group("/ofy", middleware.JWT())
+	r.Use(middleware.JWT())
+	medicalGroup := r.Group("/medical")
+	{
+		//添加成长记录
+		medicalGroup.POST("/add", medical.Add)
+		//获取成长记录
+		medicalGroup.GET("/retrieve", medical.Retrieve)
+	}
 	//scheduleGroup := ofy.Group("/schedule")
 	//{
 	//	scheduleGroup.POST("/create", schedule.Add)
@@ -32,19 +45,7 @@ func main() {
 	//	scheduleGroup.POST("/update", account.Login)
 	//	scheduleGroup.POST("/delete", account.Login)
 	//}
-	medicalGroup := ofy.Group("/medical")
-	{
-		//添加成长记录
-		medicalGroup.POST("/add", medical.Add)
-		//获取成长记录
-		medicalGroup.GET("/retrieve", medical.Retrieve)
-	}
-	calculator := r.Group("/calculator")
-	{
-		calculator.GET("/subwayCost", cost.SubwayCost)
-	}
-
-	err := r.Run()
+	err := engine.Run()
 	if err != nil {
 		panic("http engine run fail")
 	}
