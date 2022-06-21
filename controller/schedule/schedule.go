@@ -3,7 +3,7 @@ package schedule
 import (
 	"box/base"
 	"box/base/output"
-	"box/service/ofy/schedule"
+	"box/service/schedule"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )

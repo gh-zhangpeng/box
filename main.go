@@ -1,9 +1,9 @@
 package main
 
 import (
+	"box/controller/account"
 	"box/controller/calculator/cost"
-	"box/controller/ofy/account"
-	"box/controller/ofy/medical"
+	"box/controller/medical"
 	"box/middleware"
 	"box/preload"
 	"github.com/gin-gonic/gin"

@@ -3,7 +3,7 @@ package account
 import (
 	"box/base"
 	"box/base/output"
-	"box/service/ofy/account"
+	"box/service/account"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )

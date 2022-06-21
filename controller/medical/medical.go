@@ -3,7 +3,7 @@ package medical
 import (
 	"box/base"
 	"box/base/output"
-	"box/service/ofy/medical"
+	"box/service/medical"
 	"github.com/gin-gonic/gin"
 )
 
