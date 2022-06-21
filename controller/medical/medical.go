@@ -10,7 +10,7 @@ import (
 func Add(ctx *gin.Context) {
 	var input medical.AddInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, err)
 		return
 	}
 	err := medical.Add(ctx, input)

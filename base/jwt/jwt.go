@@ -22,7 +22,7 @@ func ParseToken(token string) (*boxClaims, error) {
 		if claims, ok := tokenClaims.Claims.(*boxClaims); ok {
 			return claims, nil
 		}
-		log.Errorf("claims convert fail, err: %s, token: %s", err, token)
+		log.Errorf("claims convert failed, err: %s, token: %s", err, token)
 		return nil, base.ErrorSystemError
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
@@ -30,11 +30,11 @@ func ParseToken(token string) (*boxClaims, error) {
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 			return nil, base.ErrorExpiredToken
 		} else {
-			log.Errorf("parse token fail, err: %s, token: %s", err, token)
+			log.Errorf("parse token failed, err: %s, token: %s", err, token)
 			return nil, base.ErrorSystemError
 		}
 	} else {
-		log.Errorf("parse token fail, err: %s, token: %s", err, token)
+		log.Errorf("parse token failed, err: %s, token: %s", err, token)
 		return nil, base.ErrorSystemError
 	}
 }
@@ -51,7 +51,7 @@ func GenerateToken(userID int64, expiresAt int64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedString, err := token.SignedString(key)
 	if err != nil {
-		log.Errorf("signed string fail, claims: %+v", claims)
+		log.Errorf("signed string failed, claims: %+v", claims)
 		return "", base.ErrorSystemError
 	}
 	return signedString, nil

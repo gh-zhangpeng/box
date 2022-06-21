@@ -28,7 +28,7 @@ func InitMySQL() {
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
-		panic(fmt.Errorf("open db fail: %w \n", err))
+		panic(fmt.Errorf("open db failed: %w \n", err))
 	}
 	DB = db
 }

@@ -14,7 +14,7 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 	//userID := ctx.GetUint("_userID")
 	//schedules, err := model.ScheduleDao.RetrieveSchedules(ctx, userID, input.BeginTime, input.EndTime)
 	//if err != nil {
-	//	log.Errorf("retrieve schedules fail, err: %s, userID: %d, beginTime: %+d, endTime: %d", err.Error(), userID, input.BeginTime, input.EndTime)
+	//	log.Errorf("retrieve schedules failed, err: %s, userID: %d, beginTime: %+d, endTime: %d", err.Error(), userID, input.BeginTime, input.EndTime)
 	//	return nil, base.GetErrorWithMsg("检索日程失败")
 	//}
 	//type schedule struct {
@@ -61,7 +61,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 	//}
 	//_, err := model.ScheduleDao.CreateSchedule(ctx, schedule)
 	//if err != nil {
-	//	log.Errorf("create schedule fail, err: %s, schedule: %+v", err.Error(), schedule)
+	//	log.Errorf("create schedule failed, err: %s, schedule: %+v", err.Error(), schedule)
 	//	return base.GetErrorWithMsg("日程创建失败")
 	//}
 	//return nil

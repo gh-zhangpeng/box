@@ -14,7 +14,7 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 	output := map[string]interface{}{}
 	user, err := model.UserDao.GetRecord(ctx, model.UserDao.Email(email))
 	if err != nil {
-		return output, errors.Wrapf(err, "get user fail, email: %s", email)
+		return output, errors.Wrapf(err, "get user failed, email: %s", email)
 	}
 	if (user == model.User{}) {
 		return output, errors.Wrapf(base.GetErrorWithMsg("登陆失败，账户不存在"), "user does not exist, email: %s", email)
@@ -24,7 +24,7 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 	expiresAt := time.Now().Add(time.Hour * 12).UnixMilli()
 	token, err := jwt.GenerateToken(user.ID, expiresAt)
 	if err != nil {
-		return output, errors.Wrapf(base.ErrorGenerateToken, "generate token fail, userID: %d", user.ID)
+		return output, errors.Wrapf(base.ErrorGenerateToken, "generate token failed, userID: %d", user.ID)
 	}
 	output["token"] = token
 	output["expiresAt"] = expiresAt
@@ -35,7 +35,7 @@ func Register(ctx *gin.Context, email, password string) error {
 	emailPattern := "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
 	match, err := box_lib.Match(emailPattern, email)
 	if err != nil {
-		return errors.Wrapf(base.GetErrorWithMsg("邮件地址格式有误"), "match email fail, email: %s, emailPattern: %s", email, emailPattern)
+		return errors.Wrapf(base.GetErrorWithMsg("邮件地址格式有误"), "match email failed, email: %s, emailPattern: %s", email, emailPattern)
 	}
 	if !match {
 		return errors.Wrapf(base.GetErrorWithMsg("邮件地址格式有误"), "email format is incorrect, email: %s", email)
@@ -43,20 +43,20 @@ func Register(ctx *gin.Context, email, password string) error {
 	passwordPattern := "^[A-Za-z0-9.]{6,30}$"
 	match, err = box_lib.Match(passwordPattern, password)
 	if err != nil {
-		return errors.Wrapf(base.GetErrorWithMsg("密码格式有误"), "match password fail, password: %s, passwordPattern: %s", password, passwordPattern)
+		return errors.Wrapf(base.GetErrorWithMsg("密码格式有误"), "match password failed, password: %s, passwordPattern: %s", password, passwordPattern)
 	}
 	if !match {
 		return errors.Wrapf(base.GetErrorWithMsg("密码格式有误"), "password format is incorrect")
 	}
 	records, err := model.UserDao.GetRecords(ctx, model.UserDao.Email(email))
 	if err != nil {
-		return errors.Wrapf(base.GetErrorWithMsg("账户注册失败"), "get user fail, email: %s", email)
+		return errors.Wrapf(base.GetErrorWithMsg("账户注册失败"), "get user failed, email: %s", email)
 	} else if len(records) > 0 {
 		return errors.Wrapf(base.GetErrorWithMsg("邮箱已被使用"), "email already exists, email: %s", email)
 	}
 	_, err = model.UserDao.AddRecord(ctx, email, password)
 	if err != nil {
-		return errors.Wrap(base.GetErrorWithMsg("账户注册失败"), "add user fail")
+		return errors.Wrap(base.GetErrorWithMsg("账户注册失败"), "add user failed")
 	}
 	return nil
 }

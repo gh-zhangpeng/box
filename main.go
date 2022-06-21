@@ -1,6 +1,7 @@
 package main
 
 import (
+	"box/base/validator"
 	"box/controller/account"
 	"box/controller/calculator/cost"
 	"box/controller/medical"
@@ -14,6 +15,9 @@ func main() {
 	preload.InitLog()
 	preload.InitMySQL()
 	//preload.GenerateModel(preload.DB)
+
+	//初始化 validator 错误翻译器
+	validator.Init()
 
 	engine := gin.Default()
 	r := engine.Group("/api", gin.Recovery())
@@ -34,9 +38,13 @@ func main() {
 	medicalGroup := r.Group("/medical")
 	{
 		//添加成长记录
-		medicalGroup.POST("/add", medical.Add)
-		//获取成长记录
+		medicalGroup.POST("/create", medical.Add)
+		//查找成长记录
 		medicalGroup.GET("/retrieve", medical.Retrieve)
+		//更新成长记录
+		medicalGroup.GET("/update", medical.Update)
+		//删除成长记录
+		medicalGroup.GET("/delete", medical.Retrieve)
 	}
 	//scheduleGroup := ofy.Group("/schedule")
 	//{
@@ -47,6 +55,6 @@ func main() {
 	//}
 	err := engine.Run()
 	if err != nil {
-		panic("http engine run fail")
+		panic("http engine run failed")
 	}
 }

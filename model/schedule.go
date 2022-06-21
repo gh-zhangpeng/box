@@ -42,7 +42,7 @@ func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime
 	}
 	result := query.Find(&schedules)
 	if result.Error != nil {
-		log.Errorf("retrieve schedules fail, err: %s, userID: %d, beginTime: %+d, endTime: %d", result.Error.Error(), userID, beginTime, endTime)
+		log.Errorf("retrieve schedules failed, err: %s, userID: %d, beginTime: %+d, endTime: %d", result.Error.Error(), userID, beginTime, endTime)
 		return nil, result.Error
 	}
 	return schedules, nil
@@ -51,7 +51,7 @@ func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime
 func (d scheduleDao) CreateSchedule(ctx *gin.Context, schedule Schedule) (*Schedule, error) {
 	result := preload.DB.WithContext(ctx).Create(&schedule)
 	if result.Error != nil {
-		log.Errorf("create schedule fail, err: %s, schedule: %+v", result.Error.Error(), schedule)
+		log.Errorf("create schedule failed, err: %s, schedule: %+v", result.Error.Error(), schedule)
 		return nil, result.Error
 	}
 	return &schedule, nil

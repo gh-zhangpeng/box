@@ -11,13 +11,13 @@ import (
 func Retrieve(ctx *gin.Context) {
 	var input schedule.RetrieveInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		log.WithField("input", input).Errorf("schedule retrieve fail, err: %s", err.Error())
+		log.WithField("input", input).Errorf("schedule retrieve failed, err: %s", err.Error())
 		output.Failure(ctx, base.ErrorInvalidParam)
 		return
 	}
 	data, err := schedule.Retrieve(ctx, input)
 	if err != nil {
-		log.Errorf("schedule retrieve fail, err: %s", err.Error())
+		log.Errorf("schedule retrieve failed, err: %s", err.Error())
 		output.Failure(ctx, err)
 		return
 	}
@@ -27,13 +27,13 @@ func Retrieve(ctx *gin.Context) {
 func Create(ctx *gin.Context) {
 	var input schedule.CreateInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		log.WithField("input", input).Errorf("schedule create fail, err: %s", err.Error())
+		log.WithField("input", input).Errorf("schedule create failed, err: %s", err.Error())
 		output.Failure(ctx, base.ErrorInvalidParam)
 		return
 	}
 	err := schedule.Create(ctx, input)
 	if err != nil {
-		log.WithField("input", input).Errorf("schedule create fail, err: %s", err.Error())
+		log.WithField("input", input).Errorf("schedule create failed, err: %s", err.Error())
 		output.Failure(ctx, err)
 		return
 	}

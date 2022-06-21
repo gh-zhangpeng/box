@@ -11,46 +11,36 @@ import (
 
 type UpdateInput struct {
 	ID                int64   `json:"ID" binding:"required"`
-	Height            float32 `json:"height"`
-	Weight            float32 `json:"weight"`
-	HeadCircumference float32 `json:"headCircumference"`
+	Height            float32 `json:"height" binding:"required_without_all=Weight HeadCircumference"`
+	Weight            float32 `json:"weight" binding:"required_without_all=Height HeadCircumference"`
+	HeadCircumference float32 `json:"headCircumference" binding:"required_without_all=Height Weight"`
 }
 
 func UpdateRecord(ctx *gin.Context, input UpdateInput) error {
-	if input.Height <= 0 && input.Weight <= 0 && input.HeadCircumference <= 0 {
-		return base.ErrorInvalidParam
-	}
 	condition := model.Medical{
 		ID: input.ID,
-		//Model: gorm.Model{ID: input.ID},
 	}
 	newValue := model.Medical{
 		Height:            input.Height,
 		Weight:            input.Weight,
 		HeadCircumference: input.HeadCircumference,
 		UpdatedAt:         time.Now().Unix(),
-		//Model: gorm.Model{
-		//	UpdatedAt: time.Now(),
-		//},
 	}
 	err := model.MedicalDao.UpdateRecord(ctx, condition, newValue)
 	if err != nil {
-		log.WithField("condition", condition).WithField("newValue", newValue).Errorf("medical update record fail, err: %s", err.Error())
+		log.WithField("condition", condition).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
 }
 
 type AddInput struct {
-	Height            float32 `json:"height"`
-	Weight            float32 `json:"weight"`
-	HeadCircumference float32 `json:"headCircumference"`
+	Height            float32 `json:"height" binding:"required_without_all=Weight HeadCircumference"`
+	Weight            float32 `json:"weight" binding:"required_without_all=Height HeadCircumference"`
+	HeadCircumference float32 `json:"headCircumference" binding:"required_without_all=Height Weight"`
 }
 
 func Add(ctx *gin.Context, input AddInput) error {
-	if input.Height <= 0 && input.Weight <= 0 && input.HeadCircumference <= 0 {
-		return base.ErrorInvalidParam
-	}
 	medical := model.Medical{
 		Height:            input.Height,
 		Weight:            input.Weight,
@@ -59,7 +49,7 @@ func Add(ctx *gin.Context, input AddInput) error {
 	}
 	err := model.MedicalDao.AddRecord(ctx, medical)
 	if err != nil {
-		log.WithField("medical", medical).Errorf("medical add record fail, err: %s", err.Error())
+		log.WithField("medical", medical).Errorf("medical add failed, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
@@ -73,7 +63,7 @@ type RetrieveInput struct {
 func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, error) {
 	totalCount, records, err := model.MedicalDao.GetRecords(ctx, model.Paginate(input.PageNo, input.PageSize), model.OrderBy("updated_at desc"))
 	if err != nil {
-		log.Errorf("medical get records fail, err: %s", err.Error())
+		log.Errorf("medical get records failed, err: %s", err.Error())
 		return nil, err
 	}
 	type medical struct {
