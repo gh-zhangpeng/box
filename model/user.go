@@ -36,25 +36,7 @@ var UserDao userDao
 
 type userDao struct{}
 
-func (d userDao) GetRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) ([]User, error) {
-	var records []User
-	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&records)
-	if result.Error != nil {
-		return records, errors.Wrapf(base.ErrorDBSelect, "get record failed, err: %s", result.Error.Error())
-	}
-	return records, nil
-}
-
-func (d userDao) GetRecord(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (User, error) {
-	var record User
-	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&record).Limit(1)
-	if result.Error != nil {
-		return record, errors.Wrapf(base.ErrorDBSelect, "get record failed, err: %s", result.Error.Error())
-	}
-	return record, nil
-}
-
-func (d userDao) AddRecord(ctx *gin.Context, email string, password string) (User, error) {
+func (d userDao) CreateRecord(ctx *gin.Context, email string, password string) (User, error) {
 	user := User{
 		Email:    email,
 		Password: password,
@@ -64,4 +46,22 @@ func (d userDao) AddRecord(ctx *gin.Context, email string, password string) (Use
 		return User{}, errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
 	}
 	return user, nil
+}
+
+func (d userDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) ([]User, error) {
+	var records []User
+	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&records)
+	if result.Error != nil {
+		return records, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
+	}
+	return records, nil
+}
+
+func (d userDao) RetrieveRecord(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (User, error) {
+	var record User
+	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&record).Limit(1)
+	if result.Error != nil {
+		return record, errors.Wrapf(base.ErrorDBSelect, "retrieve record failed, err: %s", result.Error.Error())
+	}
+	return record, nil
 }

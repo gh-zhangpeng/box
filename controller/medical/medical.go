@@ -24,10 +24,10 @@ func Create(ctx *gin.Context) {
 func Update(ctx *gin.Context) {
 	var input medical.UpdateInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, err)
 		return
 	}
-	err := medical.UpdateRecord(ctx, input)
+	err := medical.Update(ctx, input)
 	if err != nil {
 		output.Failure(ctx, err)
 		return

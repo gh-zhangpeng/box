@@ -12,7 +12,7 @@ import (
 
 func Login(ctx *gin.Context, email, password string) (map[string]interface{}, error) {
 	output := map[string]interface{}{}
-	user, err := model.UserDao.GetRecord(ctx, model.UserDao.Email(email))
+	user, err := model.UserDao.RetrieveRecord(ctx, model.UserDao.Email(email), model.Deleted(false))
 	if err != nil {
 		return output, errors.Wrapf(err, "get user failed, email: %s", email)
 	}
@@ -48,13 +48,13 @@ func Register(ctx *gin.Context, email, password string) error {
 	if !match {
 		return errors.Wrapf(base.GetErrorWithMsg("密码格式有误"), "password format is incorrect")
 	}
-	records, err := model.UserDao.GetRecords(ctx, model.UserDao.Email(email))
+	records, err := model.UserDao.RetrieveRecords(ctx, model.UserDao.Email(email))
 	if err != nil {
 		return errors.Wrapf(base.GetErrorWithMsg("账户注册失败"), "get user failed, email: %s", email)
 	} else if len(records) > 0 {
 		return errors.Wrapf(base.GetErrorWithMsg("邮箱已被使用"), "email already exists, email: %s", email)
 	}
-	_, err = model.UserDao.AddRecord(ctx, email, password)
+	_, err = model.UserDao.CreateRecord(ctx, email, password)
 	if err != nil {
 		return errors.Wrap(base.GetErrorWithMsg("账户注册失败"), "add user failed")
 	}

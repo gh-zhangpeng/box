@@ -31,18 +31,7 @@ var MedicalDao medicalDao
 
 type medicalDao struct{}
 
-func (d medicalDao) GetRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (int64, []Medical, error) {
-	var data []Medical
-	db := preload.DB.WithContext(ctx).Scopes(options...)
-	var totalCount int64
-	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
-	if result.Error != nil {
-		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "get records failed, err: %s", result.Error.Error())
-	}
-	return totalCount, data, nil
-}
-
-func (d medicalDao) AddRecord(ctx *gin.Context, value Medical) error {
+func (d medicalDao) CreateRecord(ctx *gin.Context, value Medical) error {
 	result := preload.DB.WithContext(ctx).Create(&value)
 	if result.Error != nil {
 		return errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
@@ -50,10 +39,29 @@ func (d medicalDao) AddRecord(ctx *gin.Context, value Medical) error {
 	return nil
 }
 
-func (d medicalDao) UpdateRecord(ctx *gin.Context, condition Medical, newValue Medical) error {
-	result := preload.DB.WithContext(ctx).Where(condition).Updates(&newValue)
+func (d medicalDao) UpdateRecordByID(ctx *gin.Context, ID int64, newValue Medical) error {
+	result := preload.DB.WithContext(ctx).Model(&Medical{}).Where(Medical{ID: ID, DeletedAt: 0}).Limit(1).Updates(&newValue)
 	if result.Error != nil {
 		return errors.Wrapf(base.ErrorDBUpdate, "update record failed, err: %s", result.Error.Error())
 	}
 	return nil
+}
+
+func (d medicalDao) UpdateRecordByIDWithMap(ctx *gin.Context, ID int64, newValue map[string]interface{}) error {
+	result := preload.DB.WithContext(ctx).Model(&Medical{}).Where(&Medical{ID: ID, DeletedAt: 0}).Limit(1).Updates(newValue)
+	if result.Error != nil {
+		return errors.Wrapf(base.ErrorDBUpdate, "update record failed, err: %s", result.Error.Error())
+	}
+	return nil
+}
+
+func (d medicalDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (int64, []Medical, error) {
+	var data []Medical
+	db := preload.DB.WithContext(ctx).Scopes(options...)
+	var totalCount int64
+	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
+	if result.Error != nil {
+		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
+	}
+	return totalCount, data, nil
 }

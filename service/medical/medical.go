@@ -11,24 +11,21 @@ import (
 
 type UpdateInput struct {
 	ID                int64   `json:"ID" binding:"required"`
-	Height            float32 `json:"height" binding:"required_without_all=Weight HeadCircumference"`
-	Weight            float32 `json:"weight" binding:"required_without_all=Height HeadCircumference"`
-	HeadCircumference float32 `json:"headCircumference" binding:"required_without_all=Height Weight"`
+	Height            float32 `json:"height"`
+	Weight            float32 `json:"weight"`
+	HeadCircumference float32 `json:"headCircumference"`
 }
 
-func UpdateRecord(ctx *gin.Context, input UpdateInput) error {
-	condition := model.Medical{
-		ID: input.ID,
+func Update(ctx *gin.Context, input UpdateInput) error {
+	newValue := map[string]interface{}{
+		"height":             input.Height,
+		"weight":             input.Weight,
+		"head_circumference": input.HeadCircumference,
+		"updated_at":         time.Now().Unix(),
 	}
-	newValue := model.Medical{
-		Height:            input.Height,
-		Weight:            input.Weight,
-		HeadCircumference: input.HeadCircumference,
-		UpdatedAt:         time.Now().Unix(),
-	}
-	err := model.MedicalDao.UpdateRecord(ctx, condition, newValue)
+	err := model.MedicalDao.UpdateRecordByIDWithMap(ctx, input.ID, newValue)
 	if err != nil {
-		log.WithField("condition", condition).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
+		log.WithField("ID", input.ID).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
@@ -47,7 +44,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 		HeadCircumference: input.HeadCircumference,
 		OperatorID:        ctx.GetInt64("_userID"),
 	}
-	err := model.MedicalDao.AddRecord(ctx, medical)
+	err := model.MedicalDao.CreateRecord(ctx, medical)
 	if err != nil {
 		log.WithField("medical", medical).Errorf("medical add failed, err: %s", err.Error())
 		return base.ErrorSystemError
@@ -61,9 +58,13 @@ type RetrieveInput struct {
 }
 
 func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, error) {
-	totalCount, records, err := model.MedicalDao.GetRecords(ctx, model.Paginate(input.PageNo, input.PageSize), model.OrderBy("updated_at desc"))
+	totalCount, records, err := model.MedicalDao.RetrieveRecords(
+		ctx, model.Paginate(input.PageNo, input.PageSize),
+		model.OrderBy("updated_at desc"),
+		model.Deleted(false),
+	)
 	if err != nil {
-		log.Errorf("medical get records failed, err: %s", err.Error())
+		log.Errorf("medical retrieve records failed, err: %s", err.Error())
 		return nil, err
 	}
 	type medical struct {
@@ -90,7 +91,7 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 		operatorIDs = append(operatorIDs, uint(record.OperatorID))
 	}
 
-	users, err := model.UserDao.GetRecords(ctx, model.IDIn(box_lib.UniqueUIntSlice(operatorIDs)))
+	users, err := model.UserDao.RetrieveRecords(ctx, model.IDIn(box_lib.UniqueUIntSlice(operatorIDs)))
 	if err != nil {
 		return nil, err
 	}
