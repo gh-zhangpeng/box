@@ -50,15 +50,17 @@ func Retrieve(ctx *gin.Context) {
 }
 
 func Delete(ctx *gin.Context) {
-	var input medical.RetrieveInput
+	var input struct {
+		ID int64 `json:"ID"  binding:"required"`
+	}
 	if err := ctx.ShouldBind(&input); err != nil {
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, err)
 		return
 	}
-	data, err := medical.Retrieve(ctx, input)
+	err := medical.Delete(ctx, input.ID)
 	if err != nil {
 		output.Failure(ctx, err)
 		return
 	}
-	output.Success(ctx, data)
+	output.Success(ctx, nil)
 }

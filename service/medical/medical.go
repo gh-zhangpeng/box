@@ -9,28 +9,6 @@ import (
 	"time"
 )
 
-type UpdateInput struct {
-	ID                int64   `json:"ID" binding:"required"`
-	Height            float32 `json:"height"`
-	Weight            float32 `json:"weight"`
-	HeadCircumference float32 `json:"headCircumference"`
-}
-
-func Update(ctx *gin.Context, input UpdateInput) error {
-	newValue := map[string]interface{}{
-		"height":             input.Height,
-		"weight":             input.Weight,
-		"head_circumference": input.HeadCircumference,
-		"updated_at":         time.Now().Unix(),
-	}
-	err := model.MedicalDao.UpdateRecordByIDWithMap(ctx, input.ID, newValue)
-	if err != nil {
-		log.WithField("ID", input.ID).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
-		return base.ErrorSystemError
-	}
-	return nil
-}
-
 type CreateInput struct {
 	Height            float32 `json:"height" binding:"required_without_all=Weight HeadCircumference"`
 	Weight            float32 `json:"weight" binding:"required_without_all=Height HeadCircumference"`
@@ -46,7 +24,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 	}
 	err := model.MedicalDao.CreateRecord(ctx, medical)
 	if err != nil {
-		log.WithField("medical", medical).Errorf("medical add failed, err: %s", err.Error())
+		log.WithField("medical", medical).Errorf("medical create failed, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
@@ -108,4 +86,36 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 		"totalCount": totalCount,
 		"medicals":   medicals,
 	}, nil
+}
+
+type UpdateInput struct {
+	ID                int64   `json:"ID" binding:"required"`
+	Height            float32 `json:"height"`
+	Weight            float32 `json:"weight"`
+	HeadCircumference float32 `json:"headCircumference"`
+}
+
+func Update(ctx *gin.Context, input UpdateInput) error {
+	newValue := map[string]interface{}{
+		"height":             input.Height,
+		"weight":             input.Weight,
+		"head_circumference": input.HeadCircumference,
+		"updated_at":         time.Now().Unix(),
+	}
+	err := model.MedicalDao.UpdateRecordByIDWithMap(ctx, input.ID, newValue)
+	if err != nil {
+		log.WithField("ID", input.ID).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
+		return base.ErrorSystemError
+	}
+	return nil
+}
+
+func Delete(ctx *gin.Context, ID int64) error {
+	newValue := model.Medical{DeletedAt: time.Now().Unix()}
+	err := model.MedicalDao.UpdateRecordByID(ctx, ID, newValue)
+	if err != nil {
+		log.WithField("ID", ID).WithField("newValue", newValue).Errorf("medical delete failed, err: %s", err.Error())
+		return base.ErrorSystemError
+	}
+	return nil
 }
