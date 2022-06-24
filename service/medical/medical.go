@@ -34,13 +34,13 @@ func UpdateRecord(ctx *gin.Context, input UpdateInput) error {
 	return nil
 }
 
-type AddInput struct {
+type CreateInput struct {
 	Height            float32 `json:"height" binding:"required_without_all=Weight HeadCircumference"`
 	Weight            float32 `json:"weight" binding:"required_without_all=Height HeadCircumference"`
 	HeadCircumference float32 `json:"headCircumference" binding:"required_without_all=Height Weight"`
 }
 
-func Add(ctx *gin.Context, input AddInput) error {
+func Create(ctx *gin.Context, input CreateInput) error {
 	medical := model.Medical{
 		Height:            input.Height,
 		Weight:            input.Weight,

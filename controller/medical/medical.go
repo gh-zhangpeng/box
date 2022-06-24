@@ -7,13 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Add(ctx *gin.Context) {
-	var input medical.AddInput
+func Create(ctx *gin.Context) {
+	var input medical.CreateInput
 	if err := ctx.ShouldBind(&input); err != nil {
 		output.Failure(ctx, err)
 		return
 	}
-	err := medical.Add(ctx, input)
+	err := medical.Create(ctx, input)
 	if err != nil {
 		output.Failure(ctx, err)
 		return
@@ -36,6 +36,20 @@ func Update(ctx *gin.Context) {
 }
 
 func Retrieve(ctx *gin.Context) {
+	var input medical.RetrieveInput
+	if err := ctx.ShouldBind(&input); err != nil {
+		output.Failure(ctx, base.ErrorInvalidParam)
+		return
+	}
+	data, err := medical.Retrieve(ctx, input)
+	if err != nil {
+		output.Failure(ctx, err)
+		return
+	}
+	output.Success(ctx, data)
+}
+
+func Delete(ctx *gin.Context) {
 	var input medical.RetrieveInput
 	if err := ctx.ShouldBind(&input); err != nil {
 		output.Failure(ctx, base.ErrorInvalidParam)

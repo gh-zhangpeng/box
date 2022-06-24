@@ -38,17 +38,17 @@ func main() {
 	medicalGroup := r.Group("/medical")
 	{
 		//添加成长记录
-		medicalGroup.POST("/create", medical.Add)
+		medicalGroup.POST("/create", medical.Create)
 		//查找成长记录
 		medicalGroup.GET("/retrieve", medical.Retrieve)
 		//更新成长记录
 		medicalGroup.GET("/update", medical.Update)
 		//删除成长记录
-		medicalGroup.GET("/delete", medical.Retrieve)
+		medicalGroup.GET("/delete", medical.Delete)
 	}
 	//scheduleGroup := ofy.Group("/schedule")
 	//{
-	//	scheduleGroup.POST("/create", schedule.Add)
+	//	scheduleGroup.POST("/create", schedule.Create)
 	//	scheduleGroup.GET("/retrieve", schedule.Retrieve)
 	//	scheduleGroup.POST("/update", account.Login)
 	//	scheduleGroup.POST("/delete", account.Login)

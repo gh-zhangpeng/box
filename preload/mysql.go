@@ -58,22 +58,21 @@ func GenerateModel(db *gorm.DB) {
 		}
 		return tableName
 	})
-	dataMap := map[string]func(detailType string) (dataType string){
-		"int": func(detailType string) (dataType string) {
-			if strings.Contains(detailType, "unsigned") {
-				return "int64"
-			}
-			return "int64"
-		},
-		//"bigint": func(detailType string) (dataType string) {
-		//	fmt.Printf("dd: %s\n", detailType)
-		//	if strings.Contains(detailType, "unsigned") {
-		//		return "uint64"
-		//	}
-		//	return "int64"
-		//},
-	}
-	g.WithDataTypeMap(dataMap)
+	//g.WithDataTypeMap(map[string]func(detailType string) (dataType string){
+	//	//"int": func(detailType string) (dataType string) {
+	//	//	if strings.Contains(detailType, "unsigned") {
+	//	//		return "int64"
+	//	//	}
+	//	//	return "int64"
+	//	//},
+	//	//"bigint": func(detailType string) (dataType string) {
+	//	//	fmt.Printf("dd: %s\n", detailType)
+	//	//	if strings.Contains(detailType, "unsigned") {
+	//	//		return "uint64"
+	//	//	}
+	//	//	return "int64"
+	//	//},
+	//})
 	//g.GenerateModelAs("tblUser", "User")
 	g.GenerateAllTable()
 	g.Execute()
