@@ -14,7 +14,7 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 	output := map[string]interface{}{}
 	user, err := model.UserDao.RetrieveRecord(ctx, model.UserDao.Email(email), model.Deleted(false))
 	if err != nil {
-		return output, errors.Wrapf(err, "get user failed, email: %s", email)
+		return output, errors.Wrapf(err, "retrieve user failed, email: %s", email)
 	}
 	if (user == model.User{}) {
 		return output, errors.Wrapf(base.GetErrorWithMsg("登陆失败，账户不存在"), "user does not exist, email: %s", email)
@@ -50,7 +50,7 @@ func Register(ctx *gin.Context, email, password string) error {
 	}
 	records, err := model.UserDao.RetrieveRecords(ctx, model.UserDao.Email(email))
 	if err != nil {
-		return errors.Wrapf(base.GetErrorWithMsg("账户注册失败"), "get user failed, email: %s", email)
+		return errors.Wrapf(base.GetErrorWithMsg("账户注册失败"), "retrieve user failed, email: %s", email)
 	} else if len(records) > 0 {
 		return errors.Wrapf(base.GetErrorWithMsg("邮箱已被使用"), "email already exists, email: %s", email)
 	}

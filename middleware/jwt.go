@@ -13,7 +13,7 @@ func JWT() gin.HandlerFunc {
 		token, err := ctx.Cookie("token")
 		if err != nil {
 			log.Errorf("get token from cookie failed, err: %s", err.Error())
-			output.Failure(ctx, base.ErrorSystemError)
+			output.Failure(ctx, base.ErrorNotLogin)
 			ctx.Abort()
 			return
 		}

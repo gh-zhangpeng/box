@@ -5,6 +5,7 @@ import (
 	"box/controller/account"
 	"box/controller/calculator/cost"
 	"box/controller/medical"
+	"box/controller/schedule"
 	"box/middleware"
 	"box/preload"
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,6 @@ func main() {
 		calculator.GET("/subwayCost", cost.SubwayCost)
 	}
 
-	//ofy := r.Group("/ofy", middleware.JWT())
 	r.Use(middleware.JWT())
 	medicalGroup := r.Group("/medical")
 	{
@@ -46,13 +46,13 @@ func main() {
 		//删除成长记录
 		medicalGroup.POST("/delete", medical.Delete)
 	}
-	//scheduleGroup := ofy.Group("/schedule")
-	//{
-	//	scheduleGroup.POST("/create", schedule.CreateRecord)
-	//	scheduleGroup.GET("/retrieve", schedule.RetrieveRecords)
-	//	scheduleGroup.POST("/update", account.Login)
-	//	scheduleGroup.POST("/delete", account.Login)
-	//}
+	scheduleGroup := r.Group("/schedule")
+	{
+		scheduleGroup.POST("/create", schedule.Create)
+		scheduleGroup.GET("/retrieve", schedule.Retrieve)
+		scheduleGroup.POST("/update", account.Login)
+		scheduleGroup.POST("/delete", account.Login)
+	}
 	err := engine.Run()
 	if err != nil {
 		panic("http engine run failed")

@@ -1,8 +1,10 @@
 package model
 
 import (
+	"box/base"
 	"box/preload"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
@@ -31,7 +33,7 @@ var ScheduleDao scheduleDao
 
 type scheduleDao struct{}
 
-func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime, endTime int64) ([]Schedule, error) {
+func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime, endTime int64) (int64, []Schedule, error) {
 	var schedules []Schedule
 	query := preload.DB.WithContext(ctx).Where(Schedule{UserID: userID})
 	if beginTime > 0 {
@@ -40,19 +42,19 @@ func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime
 	if endTime > 0 {
 		query = query.Where("end_time <= ?", time.UnixMilli(endTime))
 	}
-	result := query.Find(&schedules)
+	var totalCount int64
+	result := query.Find(&schedules).Offset(-1).Limit(-1).Count(&totalCount)
 	if result.Error != nil {
 		log.Errorf("retrieve schedules failed, err: %s, userID: %d, beginTime: %+d, endTime: %d", result.Error.Error(), userID, beginTime, endTime)
-		return nil, result.Error
+		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
 	}
-	return schedules, nil
+	return totalCount, schedules, nil
 }
 
-func (d scheduleDao) CreateSchedule(ctx *gin.Context, schedule Schedule) (*Schedule, error) {
+func (d scheduleDao) CreateRecord(ctx *gin.Context, schedule Schedule) error {
 	result := preload.DB.WithContext(ctx).Create(&schedule)
 	if result.Error != nil {
-		log.Errorf("create schedule failed, err: %s, schedule: %+v", result.Error.Error(), schedule)
-		return nil, result.Error
+		return errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
 	}
-	return &schedule, nil
+	return nil
 }
