@@ -2,6 +2,7 @@ package medical
 
 import (
 	"box/base"
+	"box/middleware"
 	"box/model"
 	box_lib "github.com/gh-zhangpeng/box-lib"
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 		Height:            input.Height,
 		Weight:            input.Weight,
 		HeadCircumference: input.HeadCircumference,
-		OperatorID:        ctx.GetInt64("_userID"),
+		OperatorID:        middleware.GetUserID(ctx),
 	}
 	err := model.MedicalDao.CreateRecord(ctx, medical)
 	if err != nil {

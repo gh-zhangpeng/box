@@ -2,10 +2,24 @@ package schedule
 
 import (
 	"box/base"
+	"box/middleware"
 	"box/model"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
+
+func Delete(ctx *gin.Context, ID int64) error {
+	return nil
+}
+
+type UpdateInput struct {
+	BeginTime int64 `json:"beginTime"`
+	EndTime   int64 `json:"endTime"`
+}
+
+func Update(ctx *gin.Context, input UpdateInput) (map[string]interface{}, error) {
+	return nil, nil
+}
 
 type RetrieveInput struct {
 	BeginTime int64 `json:"beginTime"`
@@ -13,13 +27,14 @@ type RetrieveInput struct {
 }
 
 func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, error) {
-	userID := ctx.GetInt64("_userID")
-	totalCount, schedules, err := model.ScheduleDao.RetrieveSchedules(ctx, userID, input.BeginTime, input.EndTime)
+	userID := middleware.GetUserID(ctx)
+	totalCount, schedules, err := model.ScheduleDao.RetrieveRecords(ctx, model.UserID(userID), model.ScheduleDao.TimeRange(input.BeginTime, input.EndTime), model.Deleted(false))
 	if err != nil {
 		return nil, base.GetErrorWithMsg("检索日程失败")
 	}
 	type schedule struct {
 		ID        int64  `json:"id"`        // 自增ID
+		UserID    int64  `json:"userID"`    // 用户ID
 		Title     string `json:"title"`     // 日程标题
 		Content   string `json:"content"`   // 日程内容
 		BeginTime int64  `json:"beginTime"` // 日程开始时间
@@ -30,6 +45,7 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 	for _, v := range schedules {
 		output = append(output, schedule{
 			ID:        v.ID,
+			UserID:    v.UserID,
 			Title:     v.Title,
 			Content:   v.Content,
 			BeginTime: v.BeginTime,
@@ -51,7 +67,7 @@ type CreateInput struct {
 }
 
 func Create(ctx *gin.Context, input CreateInput) error {
-	userID := ctx.GetInt64("_userID")
+	userID := middleware.GetUserID(ctx)
 	schedule := model.Schedule{
 		UserID:    userID,
 		Title:     input.Title,

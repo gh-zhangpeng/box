@@ -31,13 +31,17 @@ func IDIn(IDs []uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func UserID(userID int64) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("user_id = ?", userID)
+	}
+}
+
 func Deleted(deleted bool) func(db *gorm.DB) *gorm.DB {
-	if !deleted {
-		return func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if !deleted {
 			return db.Where("deleted_at = 0")
 		}
-	}
-	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("deleted_at > 0")
 	}
 }

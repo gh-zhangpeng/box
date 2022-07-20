@@ -5,8 +5,7 @@ import (
 	"box/preload"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"time"
+	"gorm.io/gorm"
 )
 
 const tableNameSchedule = "tblSchedule"
@@ -33,22 +32,30 @@ var ScheduleDao scheduleDao
 
 type scheduleDao struct{}
 
-func (d scheduleDao) RetrieveSchedules(ctx *gin.Context, userID int64, beginTime, endTime int64) (int64, []Schedule, error) {
-	var schedules []Schedule
-	query := preload.DB.WithContext(ctx).Where(Schedule{UserID: userID})
-	if beginTime > 0 {
-		query = query.Where("begin_time >= ?", time.UnixMilli(beginTime))
+func (d scheduleDao) TimeRange(beginTime int64, endTime int64) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if beginTime == 0 && endTime == 0 {
+			return db
+		}
+		if beginTime > 0 {
+			db = db.Where("begin_time >= ?", beginTime)
+		}
+		if endTime > 0 {
+			db = db.Where("end_time <= ?", endTime)
+		}
+		return db
 	}
-	if endTime > 0 {
-		query = query.Where("end_time <= ?", time.UnixMilli(endTime))
-	}
+}
+
+func (d scheduleDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (int64, []Schedule, error) {
+	var data []Schedule
+	db := preload.DB.WithContext(ctx).Scopes(options...)
 	var totalCount int64
-	result := query.Find(&schedules).Offset(-1).Limit(-1).Count(&totalCount)
+	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
 	if result.Error != nil {
-		log.Errorf("retrieve schedules failed, err: %s, userID: %d, beginTime: %+d, endTime: %d", result.Error.Error(), userID, beginTime, endTime)
 		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
 	}
-	return totalCount, schedules, nil
+	return totalCount, data, nil
 }
 
 func (d scheduleDao) CreateRecord(ctx *gin.Context, schedule Schedule) error {

@@ -4,13 +4,16 @@ import (
 	"box/base"
 	"box/base/jwt"
 	"box/base/output"
+	"box/constant"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
+var USERID = "_userID"
+
 func JWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		token, err := ctx.Cookie("token")
+		token, err := ctx.Cookie(constant.COOKIE_TOKEN)
 		if err != nil {
 			log.Errorf("get token from cookie failed, err: %s", err.Error())
 			output.Failure(ctx, base.ErrorNotLogin)
@@ -29,8 +32,12 @@ func JWT() gin.HandlerFunc {
 				ctx.Abort()
 				return
 			}
-			ctx.Set("_userID", claims.UserID)
+			ctx.Set(USERID, claims.UserID)
 		}
 		ctx.Next()
 	}
+}
+
+func GetUserID(ctx *gin.Context) int64 {
+	return ctx.GetInt64(USERID)
 }

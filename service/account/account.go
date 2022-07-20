@@ -21,7 +21,7 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 	} else if password != user.Password {
 		return output, errors.WithStack(base.GetErrorWithMsg("登陆失败，密码错误"))
 	}
-	expiresAt := time.Now().Add(time.Hour * 12).UnixMilli()
+	expiresAt := time.Now().Add(time.Hour * 12).Unix()
 	token, err := jwt.GenerateToken(user.ID, expiresAt)
 	if err != nil {
 		return output, errors.Wrapf(base.ErrorGenerateToken, "generate token failed, userID: %d", user.ID)

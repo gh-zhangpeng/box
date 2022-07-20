@@ -50,8 +50,8 @@ func main() {
 	{
 		scheduleGroup.POST("/create", schedule.Create)
 		scheduleGroup.GET("/retrieve", schedule.Retrieve)
-		scheduleGroup.POST("/update", account.Login)
-		scheduleGroup.POST("/delete", account.Login)
+		scheduleGroup.POST("/update", schedule.Update)
+		scheduleGroup.POST("/delete", schedule.Delete)
 	}
 	err := engine.Run()
 	if err != nil {
