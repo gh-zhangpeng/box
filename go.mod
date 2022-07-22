@@ -3,7 +3,7 @@ module box
 go 1.17
 
 //replace github.com/gh-zhangpeng/box-lib => ../box-lib
-replace gorm.io/gen => ../gen
+//replace gorm.io/gen => ../gen
 
 require (
 	github.com/gh-zhangpeng/box-lib v1.0.6
@@ -17,7 +17,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/driver/sqlite v1.3.5
-	gorm.io/gen v0.3.12
+	gorm.io/gen v0.3.13
 	gorm.io/gorm v1.23.9-0.20220713102635-3262daf8d468
 	gorm.io/plugin/dbresolver v1.2.1
 )

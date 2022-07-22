@@ -12,7 +12,7 @@ type User struct {
 	Email     string `gorm:"column:email;type:varchar(50);not null;uniqueIndex:uk_email,priority:1" json:"email"` // 电子邮箱
 	Password  string `gorm:"column:password;type:varchar(20);not null" json:"password"`                           // 密码
 	CreatedAt int64  `gorm:"column:created_at;type:int;not null" json:"created_at"`                               // 创建时间
-	UpdatedAt int64  `gorm:"1111" json:"updated_at"`                                                              // 更新时间
+	UpdatedAt int64  `gorm:"column:updated_at;type:int;not null" json:"updated_at"`                               // 更新时间
 	DeletedAt int64  `gorm:"column:deleted_at;type:int;not null" json:"deleted_at"`                               // 删除时间
 }
 
