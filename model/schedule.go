@@ -47,13 +47,21 @@ func (d scheduleDao) TimeRange(beginTime int64, endTime int64) func(db *gorm.DB)
 	}
 }
 
+//func (d scheduleDao) UpdateRecordByID(ctx *gin.Context, ID int64, newValue interface{}) error {
+//	result := preload.DB.WithContext(ctx).Model(&Schedule{}).Where(Schedule{ID: ID, DeletedAt: 0}).Limit(1).Updates(&newValue)
+//	if result.Error != nil {
+//		return errors.Wrapf(base.ErrorDBUpdate, "update record fail, err: %s", result.Error.Error())
+//	}
+//	return nil
+//}
+
 func (d scheduleDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.DB) *gorm.DB) (int64, []Schedule, error) {
 	var data []Schedule
 	db := preload.DB.WithContext(ctx).Scopes(options...)
 	var totalCount int64
 	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
 	if result.Error != nil {
-		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
+		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records fail, err: %s", result.Error.Error())
 	}
 	return totalCount, data, nil
 }
@@ -61,7 +69,7 @@ func (d scheduleDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.
 func (d scheduleDao) CreateRecord(ctx *gin.Context, schedule Schedule) error {
 	result := preload.DB.WithContext(ctx).Create(&schedule)
 	if result.Error != nil {
-		return errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
+		return errors.Wrapf(base.ErrorDBInsert, "add record fail, err: %s", result.Error.Error())
 	}
 	return nil
 }

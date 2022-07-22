@@ -34,7 +34,7 @@ type medicalDao struct{}
 func (d medicalDao) CreateRecord(ctx *gin.Context, value Medical) error {
 	result := preload.DB.WithContext(ctx).Create(&value)
 	if result.Error != nil {
-		return errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
+		return errors.Wrapf(base.ErrorDBInsert, "add record fail, err: %s", result.Error.Error())
 	}
 	return nil
 }
@@ -42,7 +42,7 @@ func (d medicalDao) CreateRecord(ctx *gin.Context, value Medical) error {
 func (d medicalDao) UpdateRecordByID(ctx *gin.Context, ID int64, newValue Medical) error {
 	result := preload.DB.WithContext(ctx).Model(&Medical{}).Where(Medical{ID: ID, DeletedAt: 0}).Limit(1).Updates(&newValue)
 	if result.Error != nil {
-		return errors.Wrapf(base.ErrorDBUpdate, "update record failed, err: %s", result.Error.Error())
+		return errors.Wrapf(base.ErrorDBUpdate, "update record fail, err: %s", result.Error.Error())
 	}
 	return nil
 }
@@ -50,7 +50,7 @@ func (d medicalDao) UpdateRecordByID(ctx *gin.Context, ID int64, newValue Medica
 func (d medicalDao) UpdateRecordByIDWithMap(ctx *gin.Context, ID int64, newValue map[string]interface{}) error {
 	result := preload.DB.WithContext(ctx).Model(&Medical{}).Where(&Medical{ID: ID, DeletedAt: 0}).Limit(1).Updates(newValue)
 	if result.Error != nil {
-		return errors.Wrapf(base.ErrorDBUpdate, "update record failed, err: %s", result.Error.Error())
+		return errors.Wrapf(base.ErrorDBUpdate, "update record fail, err: %s", result.Error.Error())
 	}
 	return nil
 }
@@ -61,7 +61,7 @@ func (d medicalDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.D
 	var totalCount int64
 	result := db.Find(&data).Offset(-1).Limit(-1).Count(&totalCount)
 	if result.Error != nil {
-		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
+		return 0, nil, errors.Wrapf(base.ErrorDBSelect, "retrieve records fail, err: %s", result.Error.Error())
 	}
 	return totalCount, data, nil
 }

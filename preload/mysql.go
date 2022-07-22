@@ -28,16 +28,18 @@ func InitMySQL() {
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
-		panic(fmt.Errorf("open db failed: %w \n", err))
+		panic(fmt.Errorf("open db fail: %w \n", err))
 	}
 	DB = db
 }
 
 func GenerateModel(db *gorm.DB) {
 	g := gen.NewGenerator(gen.Config{
-		OutPath:           "./dal/model",
+		OutPath:           "./dal/query",
 		FieldWithIndexTag: true,
 		FieldWithTypeTag:  true,
+		FieldCoverable:    true,
+		WithUnitTest:      true,
 	})
 	g.UseDB(db)
 	g.WithModelNameStrategy(func(tableName string) (modelName string) {
@@ -58,22 +60,16 @@ func GenerateModel(db *gorm.DB) {
 		}
 		return tableName
 	})
-	//g.WithDataTypeMap(map[string]func(detailType string) (dataType string){
-	//	//"int": func(detailType string) (dataType string) {
-	//	//	if strings.Contains(detailType, "unsigned") {
-	//	//		return "int64"
-	//	//	}
-	//	//	return "int64"
-	//	//},
-	//	//"bigint": func(detailType string) (dataType string) {
-	//	//	fmt.Printf("dd: %s\n", detailType)
-	//	//	if strings.Contains(detailType, "unsigned") {
-	//	//		return "uint64"
-	//	//	}
-	//	//	return "int64"
-	//	//},
-	//})
+
+	g.WithDataTypeMap(map[string]func(detailType string) (dataType string){
+		"int": func(detailType string) (dataType string) {
+			if strings.Contains(detailType, "unsigned") {
+				return "int64"
+			}
+			return "int64"
+		},
+	})
 	//g.GenerateModelAs("tblUser", "User")
-	g.GenerateAllTable()
+	g.ApplyBasic(g.GenerateAllTable()...)
 	g.Execute()
 }

@@ -15,7 +15,7 @@ func JWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := ctx.Cookie(constant.COOKIE_TOKEN)
 		if err != nil {
-			log.Errorf("get token from cookie failed, err: %s", err.Error())
+			log.Errorf("get token from cookie fail, err: %s", err.Error())
 			output.Failure(ctx, base.ErrorNotLogin)
 			ctx.Abort()
 			return
@@ -27,7 +27,7 @@ func JWT() gin.HandlerFunc {
 		} else {
 			claims, err := jwt.ParseToken(token)
 			if err != nil {
-				log.Errorf("parse token failed, err: %s", err.Error())
+				log.Errorf("parse token fail, err: %s", err.Error())
 				output.Failure(ctx, err)
 				ctx.Abort()
 				return

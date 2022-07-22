@@ -17,13 +17,13 @@ var (
 )
 
 func Init() {
-	zh := zh.New()
-	uni = ut.New(zh, zh)
+	zhTranslator := zh.New()
+	uni = ut.New(zhTranslator, zhTranslator)
 	trans, _ = uni.GetTranslator("zh")
 	validate = binding.Validator.Engine().(*validator.Validate)
 	err := zhTranslations.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
-		panic(fmt.Errorf("init validator failed: %w \n", err))
+		panic(fmt.Errorf("init validator fail: %w \n", err))
 	}
 }
 

@@ -25,7 +25,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 	}
 	err := model.MedicalDao.CreateRecord(ctx, medical)
 	if err != nil {
-		log.WithField("medical", medical).Errorf("medical create failed, err: %s", err.Error())
+		log.WithField("medical", medical).Errorf("medical create fail, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
@@ -43,7 +43,7 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 		model.Deleted(false),
 	)
 	if err != nil {
-		log.Errorf("medical retrieve records failed, err: %s", err.Error())
+		log.Errorf("medical retrieve records fail, err: %s", err.Error())
 		return nil, err
 	}
 	type medical struct {
@@ -105,7 +105,7 @@ func Update(ctx *gin.Context, input UpdateInput) error {
 	}
 	err := model.MedicalDao.UpdateRecordByIDWithMap(ctx, input.ID, newValue)
 	if err != nil {
-		log.WithField("ID", input.ID).WithField("newValue", newValue).Errorf("medical update failed, err: %s", err.Error())
+		log.WithField("ID", input.ID).WithField("newValue", newValue).Errorf("medical update fail, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil
@@ -115,7 +115,7 @@ func Delete(ctx *gin.Context, ID int64) error {
 	newValue := model.Medical{DeletedAt: time.Now().Unix()}
 	err := model.MedicalDao.UpdateRecordByID(ctx, ID, newValue)
 	if err != nil {
-		log.WithField("ID", ID).WithField("newValue", newValue).Errorf("medical delete failed, err: %s", err.Error())
+		log.WithField("ID", ID).WithField("newValue", newValue).Errorf("medical delete fail, err: %s", err.Error())
 		return base.ErrorSystemError
 	}
 	return nil

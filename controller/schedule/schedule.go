@@ -26,21 +26,21 @@ func Delete(ctx *gin.Context) {
 func Update(ctx *gin.Context) {
 	var input schedule.UpdateInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, err)
 		return
 	}
-	data, err := schedule.Update(ctx, input)
+	err := schedule.Update(ctx, input)
 	if err != nil {
 		output.Failure(ctx, err)
 		return
 	}
-	output.Success(ctx, data)
+	output.Success(ctx, nil)
 }
 
 func Retrieve(ctx *gin.Context) {
 	var input schedule.RetrieveInput
 	if err := ctx.ShouldBind(&input); err != nil {
-		output.Failure(ctx, base.ErrorInvalidParam)
+		output.Failure(ctx, err)
 		return
 	}
 	data, err := schedule.Retrieve(ctx, input)

@@ -43,7 +43,7 @@ func (d userDao) CreateRecord(ctx *gin.Context, email string, password string) (
 	}
 	result := preload.DB.WithContext(ctx).Create(&user)
 	if result.Error != nil {
-		return User{}, errors.Wrapf(base.ErrorDBInsert, "add record failed, err: %s", result.Error.Error())
+		return User{}, errors.Wrapf(base.ErrorDBInsert, "add record fail, err: %s", result.Error.Error())
 	}
 	return user, nil
 }
@@ -52,7 +52,7 @@ func (d userDao) RetrieveRecords(ctx *gin.Context, options ...func(db *gorm.DB) 
 	var records []User
 	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&records)
 	if result.Error != nil {
-		return records, errors.Wrapf(base.ErrorDBSelect, "retrieve records failed, err: %s", result.Error.Error())
+		return records, errors.Wrapf(base.ErrorDBSelect, "retrieve records fail, err: %s", result.Error.Error())
 	}
 	return records, nil
 }
@@ -61,7 +61,7 @@ func (d userDao) RetrieveRecord(ctx *gin.Context, options ...func(db *gorm.DB) *
 	var record User
 	result := preload.DB.WithContext(ctx).Scopes(options...).Find(&record).Limit(1)
 	if result.Error != nil {
-		return record, errors.Wrapf(base.ErrorDBSelect, "retrieve record failed, err: %s", result.Error.Error())
+		return record, errors.Wrapf(base.ErrorDBSelect, "retrieve record fail, err: %s", result.Error.Error())
 	}
 	return record, nil
 }
