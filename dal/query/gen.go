@@ -11,6 +11,20 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	Q        = new(Query)
+	Medical  *medical
+	Schedule *schedule
+	User     *user
+)
+
+func SetDefault(db *gorm.DB) {
+	*Q = *Use(db)
+	Medical = &Q.Medical
+	Schedule = &Q.Schedule
+	User = &Q.User
+}
+
 func Use(db *gorm.DB) *Query {
 	return &Query{
 		db:       db,

@@ -6,6 +6,7 @@ import (
 	"box/controller/calculator/cost"
 	"box/controller/medical"
 	"box/controller/schedule"
+	"box/dal/query"
 	"box/middleware"
 	"box/preload"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func main() {
 	preload.InitConfig()
 	preload.InitLog()
 	preload.InitMySQL()
+	query.SetDefault(preload.DB)
 	preload.GenerateModel(preload.DB)
 
 	//初始化 validator 错误翻译器

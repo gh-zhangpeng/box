@@ -36,3 +36,4 @@
 {"file":"/Users/zhangpeng/Desktop/zhangpeng/code/box/middleware/jwt.go:15","func":"box/middleware.JWT.func1","level":"error","msg":"get token from cookie fail, err: http: named cookie not present","time":"2022-07-20 10:34:52.327"}
 {"file":"/Users/zhangpeng/Desktop/zhangpeng/code/box/middleware/jwt.go:15","func":"box/middleware.JWT.func1","level":"error","msg":"get token from cookie fail, err: http: named cookie not present","time":"2022-07-20 10:37:56.597"}
 {"file":"/Users/zhangpeng/Desktop/zhangpeng/code/box/middleware/jwt.go:30","func":"box/middleware.JWT.func1","level":"error","msg":"parse token fail, err: token 不在有效期内","time":"2022-07-21 15:22:19.977"}
+{"file":"/Users/zhangpeng/Desktop/zhangpeng/code/box/middleware/jwt.go:30","func":"box/middleware.JWT.func1","level":"error","msg":"parse token fail, err: token 不在有效期内","time":"2022-07-22 17:29:00.532"}

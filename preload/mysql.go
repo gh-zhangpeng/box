@@ -35,6 +35,7 @@ func InitMySQL() {
 
 func GenerateModel(db *gorm.DB) {
 	g := gen.NewGenerator(gen.Config{
+		Mode:              gen.WithDefaultQuery,
 		OutPath:           "./dal/query",
 		FieldWithIndexTag: true,
 		FieldWithTypeTag:  true,

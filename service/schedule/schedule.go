@@ -5,7 +5,6 @@ import (
 	"box/dal/model"
 	"box/dal/query"
 	"box/middleware"
-	"box/preload"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -14,7 +13,7 @@ import (
 )
 
 func Delete(ctx *gin.Context, ID int64) error {
-	schedule := query.Use(preload.DB).Schedule
+	schedule := query.Schedule
 	_, err := schedule.WithContext(ctx).
 		Where(schedule.ID.Eq(ID), schedule.DeletedAt.Eq(0)).
 		UpdateColumn(schedule.DeletedAt, time.Now().Unix())
@@ -41,7 +40,7 @@ func Update(ctx *gin.Context, input UpdateInput) error {
 		EndTime:   input.EndTime,
 		UpdatedAt: time.Now().Unix(),
 	}
-	schedule := query.Use(preload.DB).Schedule
+	schedule := query.Schedule
 	_, err := schedule.WithContext(ctx).
 		Select(schedule.Title, schedule.Content, schedule.BeginTime, schedule.EndTime, schedule.UpdatedAt).
 		Where(schedule.ID.Eq(input.ID), schedule.DeletedAt.Eq(0)).
@@ -62,7 +61,7 @@ type RetrieveInput struct {
 
 func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, error) {
 	userID := middleware.GetUserID(ctx)
-	schedule := query.Use(preload.DB).Schedule
+	schedule := query.Schedule
 	conditions := make([]gen.Condition, 0, 5)
 	conditions = append(conditions, schedule.UserID.Eq(userID))
 	conditions = append(conditions, schedule.DeletedAt.Eq(0))
@@ -121,7 +120,7 @@ func Create(ctx *gin.Context, input CreateInput) error {
 		EndTime:   input.EndTime,
 		CreatedAt: time.Now().Unix(),
 	}
-	schedule := query.Use(preload.DB).Schedule
+	schedule := query.Schedule
 	err := schedule.WithContext(ctx).Omit(schedule.UpdatedAt).Create(&newValue)
 	if err != nil {
 		log.WithField("schedule", schedule).Errorf("schedule create fail, err: %s", err.Error())
