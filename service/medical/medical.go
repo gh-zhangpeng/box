@@ -4,7 +4,7 @@ import (
 	"box/base"
 	"box/middleware"
 	"box/model"
-	box_lib "github.com/gh-zhangpeng/box-lib"
+	boxlib "github.com/gh-zhangpeng/box-lib"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"time"
@@ -70,7 +70,7 @@ func Retrieve(ctx *gin.Context, input RetrieveInput) (map[string]interface{}, er
 		operatorIDs = append(operatorIDs, uint(record.OperatorID))
 	}
 
-	users, err := model.UserDao.RetrieveRecords(ctx, model.IDIn(box_lib.UniqueUIntSlice(operatorIDs)))
+	users, err := model.UserDao.RetrieveRecords(ctx, model.IDIn(boxlib.UniqueUIntSlice(operatorIDs)))
 	if err != nil {
 		return nil, err
 	}

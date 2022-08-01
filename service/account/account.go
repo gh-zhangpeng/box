@@ -4,7 +4,7 @@ import (
 	"box/base"
 	"box/base/jwt"
 	"box/model"
-	box_lib "github.com/gh-zhangpeng/box-lib"
+	boxlib "github.com/gh-zhangpeng/box-lib"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"time"
@@ -33,7 +33,7 @@ func Login(ctx *gin.Context, email, password string) (map[string]interface{}, er
 
 func Register(ctx *gin.Context, email, password string) error {
 	emailPattern := "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
-	match, err := box_lib.Match(emailPattern, email)
+	match, err := boxlib.Match(emailPattern, email)
 	if err != nil {
 		return errors.Wrapf(base.GetErrorWithMsg("邮件地址格式有误"), "match email fail, email: %s, emailPattern: %s", email, emailPattern)
 	}
@@ -41,7 +41,7 @@ func Register(ctx *gin.Context, email, password string) error {
 		return errors.Wrapf(base.GetErrorWithMsg("邮件地址格式有误"), "email format is incorrect, email: %s", email)
 	}
 	passwordPattern := "^[A-Za-z0-9.]{6,30}$"
-	match, err = box_lib.Match(passwordPattern, password)
+	match, err = boxlib.Match(passwordPattern, password)
 	if err != nil {
 		return errors.Wrapf(base.GetErrorWithMsg("密码格式有误"), "match password fail, password: %s, passwordPattern: %s", password, passwordPattern)
 	}

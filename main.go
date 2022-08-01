@@ -10,7 +10,6 @@ import (
 	"box/middleware"
 	"box/preload"
 	"github.com/gin-gonic/gin"
-	"reflect"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 	preload.InitLog()
 	preload.InitMySQL()
 	query.SetDefault(preload.DB)
-	preload.GenerateModel(preload.DB)
+	//preload.GenerateModel(preload.DB)
 
 	//初始化 validator 错误翻译器
 	validator.Init()
@@ -60,15 +59,4 @@ func main() {
 	if err != nil {
 		panic("http engine run fail")
 	}
-}
-
-func StructToMap(obj interface{}) map[string]interface{} {
-	typ := reflect.TypeOf(obj)
-	val := reflect.ValueOf(obj)
-
-	var data = make(map[string]interface{})
-	for i := 0; i < typ.NumField(); i++ {
-		data[typ.Field(i).Name] = val.Field(i).Interface()
-	}
-	return data
 }

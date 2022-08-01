@@ -1,3 +1,3 @@
 package constant
 
-var COOKIE_TOKEN = "token"
+var CookieToken = "token"

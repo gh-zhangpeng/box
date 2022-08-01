@@ -2,7 +2,7 @@ package preload
 
 import (
 	"fmt"
-	box_lib "github.com/gh-zhangpeng/box-lib"
+	boxlib "github.com/gh-zhangpeng/box-lib"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
@@ -45,19 +45,19 @@ func GenerateModel(db *gorm.DB) {
 	g.UseDB(db)
 	g.WithModelNameStrategy(func(tableName string) (modelName string) {
 		if strings.HasPrefix(tableName, "tbl") {
-			return box_lib.FirstUpper(tableName[3:])
+			return boxlib.FirstUpper(tableName[3:])
 		}
 		if strings.HasPrefix(tableName, "table") {
-			return box_lib.FirstUpper(tableName[5:])
+			return boxlib.FirstUpper(tableName[5:])
 		}
-		return box_lib.FirstUpper(tableName)
+		return boxlib.FirstUpper(tableName)
 	})
 	g.WithFileNameStrategy(func(tableName string) (fileName string) {
 		if strings.HasPrefix(tableName, "tbl") {
-			return box_lib.FirstLower(tableName[3:])
+			return boxlib.FirstLower(tableName[3:])
 		}
 		if strings.HasPrefix(tableName, "table") {
-			return box_lib.FirstLower(tableName[5:])
+			return boxlib.FirstLower(tableName[5:])
 		}
 		return tableName
 	})

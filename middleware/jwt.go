@@ -13,7 +13,7 @@ var USERID = "_userID"
 
 func JWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		token, err := ctx.Cookie(constant.COOKIE_TOKEN)
+		token, err := ctx.Cookie(constant.CookieToken)
 		if err != nil {
 			log.Errorf("get token from cookie fail, err: %s", err.Error())
 			output.Failure(ctx, base.ErrorNotLogin)
